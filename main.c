@@ -17,18 +17,26 @@
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
 #include "MotorShield.h"
+#include "FlexTimer.h"
+#include "servo.h"
 
 
 
 
 int main(void) {
 
-initFTM();
+FlexTimer_Init();
+
+
+//initServo();
 initMotorControlPins();
 
 
 while(1){
-	moveForward(100);
+	moveForward(255);
+	//updateServoPosition(200);
+
+
 }
 
 
