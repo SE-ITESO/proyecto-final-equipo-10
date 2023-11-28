@@ -31,7 +31,7 @@ void init_PIT0()
     PIT_Init(PIT_BASEADDR, &pitConfig);
 
     /* Set timer period for channel 0 */
-    PIT_SetTimerPeriod(PIT_BASEADDR, PIT_CHANNEL, USEC_TO_COUNT(62u,PIT_SOURCE_CLOCK));
+    PIT_SetTimerPeriod(PIT_BASEADDR, PIT_CHANNEL, USEC_TO_COUNT(500u,PIT_SOURCE_CLOCK));
 
     /* Enable timer interrupts for channel 0 */
     PIT_EnableInterrupts(PIT_BASEADDR, PIT_CHANNEL, kPIT_TimerInterruptEnable);
@@ -39,6 +39,8 @@ void init_PIT0()
     /* Enable at the NVIC */
     EnableIRQ(PIT_IRQ_ID);
 }
+
+
 
 void init_PIT1()
 {

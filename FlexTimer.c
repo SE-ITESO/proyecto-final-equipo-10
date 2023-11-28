@@ -21,7 +21,7 @@ void FTM0_ISR()
 }
 
 
-void FlexTimer_updateCHValue(sint16 channelValue)
+void FlexTimer_updateCHValue(sint32 channelValue)
 {
 	/**Assigns a new value for the duty cycle*/
 	FTM0->CONTROLS[0].CnV = channelValue;

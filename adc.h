@@ -11,8 +11,12 @@
 #include "clock_config.h"
 #include "board.h"
 #include "fsl_adc16.h"
+#include "gpio.h"
+
 
 void ADC_Init(void);
 uint16_t ADC_Read(void);
+bool_t return_ADC_status_flag(void);
+void clear_ADC_status_flag(void);
 
 #endif /* ADC_H_ */

@@ -4,6 +4,7 @@
  *  Created on: 20 nov. 2023
  *      Author: gabyd
  */
+#include "adc.h"
 #include "fsl_debug_console.h"
 #include "fsl_adc16.h"
 
@@ -11,6 +12,7 @@
 #define ADC_CHANNEL_GROUP    0U
 #define ADC_USER_CHANNEL     12U //PTB2
 
+bool_t adc_status_flag = FALSE;
 
 void ADC_Init(void)
 {
@@ -52,4 +54,14 @@ uint16_t ADC_Read(void)
     }
 
     return ADC16_GetChannelConversionValue(ADC_INSTANCE, ADC_CHANNEL_GROUP);
+}
+
+bool_t return_ADC_status_flag(void)
+{
+	return adc_status_flag;
+}
+
+void clear_ADC_status_flag(void)
+{
+	adc_status_flag = FALSE;
 }

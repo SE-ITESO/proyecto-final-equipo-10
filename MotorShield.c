@@ -39,11 +39,6 @@ void initMotorControlPins(void) {
 		  };
 
     CLOCK_EnableClock(kCLOCK_PortB);
-    CLOCK_EnableClock(kCLOCK_PortC);
-
-    // Assign PTC3 to FTM0_CH0
-   PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt4);
-
 
     // Initialize motor control pins as digital outputs
     GPIO_PinInit(GPIOB, MOTOR_A_IN1_PIN, &motorConfig);

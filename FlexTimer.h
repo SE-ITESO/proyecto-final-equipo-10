@@ -66,7 +66,7 @@
 
 
 
-void FlexTimer_updateCHValue(sint16 channelValue);
+void FlexTimer_updateCHValue(sint32 channelValue);
 
 void FlexTimer_Init();
 

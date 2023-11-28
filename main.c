@@ -18,24 +18,36 @@
 #include "adc.h"
 #include "MotorShield.h"
 #include "FlexTimer.h"
+#include "Direction.h"
 
+uint8_t flag =0;
 
+void set_flag(void){
+	flag = 1;
+}
 int main(void) {
 
-initFTM();
-initMotorControlPins();
+GPIO_init();
+//initFTM();
+//initMotorControlPins();
 
-init_PIT0();
+NVIC_global_enable_interrupts;
+NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ,PRIORITY_2);
 DAC0_init();
 ADC_Init();
 FlexTimer_Init();
 
-NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ,PRIORITY_5);
-
 while(1){
-	uint16_t adcValue = ADC_Read();
-	DAC_SetBufferValue(DAC0, 0U, adcValue);
+	uint32_t adcValue = ADC_Read();
+
+	//DAC_SetBufferValue(DAC0, 0U, adcValue);
+
+
 //	moveForward(100);
+	AdcToPwm(adcValue);
+
+	FlexTimer_updateCHValue(50u);
+
 }
 
 
