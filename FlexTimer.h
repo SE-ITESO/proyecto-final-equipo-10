@@ -14,7 +14,7 @@
 
 #include "MK64F12.h"
 #include "DataTypeDefinitions.h"
-
+#include "fsl_ftm.h"
 
 #define FLEX_TIMER_0_CLOCK_GATING 0x01000000
 

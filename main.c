@@ -10,7 +10,6 @@
  * @brief   Application entry point.
  */
 
-
 #include "gpio.h"
 #include "nvic.h"
 #include "pit.h"
@@ -18,32 +17,26 @@
 #include "adc.h"
 #include "MotorShield.h"
 #include "FlexTimer.h"
-#include "Direction.h"
+#include "conversion.h"
+#include "buttonManager.h"
 
-uint8_t flag =0;
-
-void set_flag(void){
-	flag = 1;
-}
 int main(void) {
 
 GPIO_init();
-//initFTM();
-//initMotorControlPins();
-
-NVIC_global_enable_interrupts;
-NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ,PRIORITY_2);
+initMotorControlPins();
 DAC0_init();
 ADC_Init();
 FlexTimer_Init();
 FlexTimer2_Init();
 
+GPIO_callback_init(GPIO_D, choose_button_pressed);
+
 while(1){
-	uint32_t adcValue = ADC_Read();
+	uint32_t adcValueServo = ADC_Read_Servo();
+	uint32_t adcValueMotor = ADC_Read_Motor();
 
-//	moveForward(100);
-	AdcToPwm(adcValue);
-
+	AdcToPwmServo(adcValueServo);
+	AdcToPwmMotorFwd(adcValueMotor);
 
 }
 

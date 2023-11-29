@@ -15,7 +15,8 @@
 
 
 void ADC_Init(void);
-uint16_t ADC_Read(void);
+uint16_t ADC_Read_Servo(void);
+uint16_t ADC_Read_Motor(void);
 bool_t return_ADC_status_flag(void);
 void clear_ADC_status_flag(void);
 

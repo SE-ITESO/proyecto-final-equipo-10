@@ -11,6 +11,7 @@
 #define ADC_INSTANCE         ADC0
 #define ADC_CHANNEL_GROUP    0U
 #define ADC_USER_CHANNEL     17U //PTE24
+#define ADC_USER_CHANNEL_M   18U //PTE25
 
 bool_t adc_status_flag = FALSE;
 
@@ -38,11 +39,29 @@ void ADC_Init(void)
 #endif /* FSL_FEATURE_ADC16_HAS_CALIBRATION */
 }
 
-uint16_t ADC_Read(void)
+uint16_t ADC_Read_Servo(void)
 {
     adc16_channel_config_t adc16ChannelConfigStruct;
 
     adc16ChannelConfigStruct.channelNumber                        = ADC_USER_CHANNEL;
+    adc16ChannelConfigStruct.enableInterruptOnConversionCompleted = false;
+
+    ADC16_SetChannelConfig(ADC_INSTANCE, ADC_CHANNEL_GROUP, &adc16ChannelConfigStruct);
+
+    while (0U == (kADC16_ChannelConversionDoneFlag &
+                  ADC16_GetChannelStatusFlags(ADC_INSTANCE, ADC_CHANNEL_GROUP)))
+    {
+        // Espera a que la conversión esté completa
+    }
+
+    return ADC16_GetChannelConversionValue(ADC_INSTANCE, ADC_CHANNEL_GROUP);
+}
+
+uint16_t ADC_Read_Motor(void)
+{
+    adc16_channel_config_t adc16ChannelConfigStruct;
+
+    adc16ChannelConfigStruct.channelNumber                        = ADC_USER_CHANNEL_M;
     adc16ChannelConfigStruct.enableInterruptOnConversionCompleted = false;
 
     ADC16_SetChannelConfig(ADC_INSTANCE, ADC_CHANNEL_GROUP, &adc16ChannelConfigStruct);

@@ -10,15 +10,20 @@
 
 volatile static gpio_interrupt_flags_t g_intr_status_flag = {0};
 
-static void (*gpio_A_callback)(void) = 0;
-static void (*gpio_B_callback)(void) = 0;
-static void (*gpio_C_callback)(void) = 0;
-static void (*gpio_D_callback)(void) = 0;
-static void (*gpio_E_callback)(void) = 0;
+volatile static bool_t g_reverse_pressed_flag = FALSE;
+volatile static bool_t g_blink_pressed_flag = FALSE;
+volatile static bool_t g_right_pressed_flag = FALSE;
+volatile static bool_t g_left_pressed_flag = FALSE;
+
+static void (*gpio_A_callback)(uint32_t flag) = 0;
+static void (*gpio_B_callback)(uint32_t flag) = 0;
+static void (*gpio_C_callback)(uint32_t flag) = 0;
+static void (*gpio_D_callback)(uint32_t flag) = 0;
+static void (*gpio_E_callback)(uint32_t flag) = 0;
 
 uint8_t irq_AFLAG = FALSE;
 
-void GPIO_callback_init(gpio_name_t gpio, void (*handler)(void))
+void GPIO_callback_init(gpio_name_t gpio, void (*handler)(uint32_t flag))
 {
 	switch(gpio)
 	{
@@ -69,13 +74,18 @@ void GPIO_init(void)
 	CLOCK_EnableClock(kCLOCK_PortD);
 	CLOCK_EnableClock(kCLOCK_PortC);
 
-
+	//control para Motores
 	GPIO_PinInit(GPIOC, 1u, &gpio_output_config);
 	PORT_SetPinMux(PORTC, 1u, kPORT_MuxAlt4);
 
-	//Servomotor
+	//control para Servomotor
 	GPIO_PinInit(GPIOC, 3u, &gpio_output_config);
 	PORT_SetPinMux(PORTC, 3u, kPORT_MuxAlt4);
+
+	//Boton para Reversa
+	GPIO_PinInit(GPIOD, REVERSE, &gpio_input_config);
+	PORT_SetPinConfig(PORTD, REVERSE, &button_config);
+	PORT_SetPinInterruptConfig(PORTD, REVERSE, kPORT_InterruptFallingEdge);
 
 	//Botones de Direccionales
 	GPIO_PinInit(GPIOD, RIGHT, &gpio_input_config);
@@ -85,6 +95,7 @@ void GPIO_init(void)
 	GPIO_PinInit(GPIOD, LEFT, &gpio_input_config);
 	PORT_SetPinConfig(PORTD, LEFT, &button_config);
 	PORT_SetPinInterruptConfig(PORTD, LEFT, kPORT_InterruptFallingEdge);
+
 	//Boton para Intermitentes
 	GPIO_PinInit(GPIOD, BLINK, &gpio_input_config);
 	PORT_SetPinConfig(PORTD, BLINK, &button_config);
@@ -99,54 +110,117 @@ void GPIO_init(void)
 
 }
 
+
+/*getters for each sound called*/
+
+bool_t get_reverse_pressed_flag(void){
+	return g_reverse_pressed_flag;
+}
+
+bool_t get_blink_pressed_flag(void){
+	return g_blink_pressed_flag;
+}
+
+bool_t get_right_pressed_flag(void){
+	return g_right_pressed_flag;
+}
+
+bool_t get_left_pressed_flag(void){
+	return g_left_pressed_flag;
+}
+
+
+/*setters for each sound called*/
+
+void set_reverse_pressed_flag(bool_t value){
+	g_reverse_pressed_flag= value;
+}
+
+void set_blink_pressed_flag(bool_t value){
+	g_blink_pressed_flag = value;
+}
+
+void set_right_pressed_flag(bool_t value){
+	g_right_pressed_flag = value;
+}
+
+void set_left_pressed_flag(bool_t value){
+	g_left_pressed_flag = value;
+}
+
 /* Change frequency */
 void PORTA_IRQHandler(void)
 {
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOA);
 	if(gpio_A_callback)
 	{
-		gpio_A_callback();
+		gpio_A_callback(irq_status);
 	}
 
-	irq_AFLAG = 1;
 	GPIO_PortClearInterruptFlags(GPIOA, 0xFFFF);
 }
 
 /* Change signal */
-void PORTC_IRQHandler(void)
-{
-	if(gpio_C_callback)
-	{
-		gpio_C_callback();
-	}
-
-	GPIO_PortClearInterruptFlags(GPIOC, 0xFFFF);
-}
-
 void PORTB_IRQHandler(void)
 {
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOB);
 	if(gpio_B_callback)
 	{
-		gpio_B_callback();
+		gpio_B_callback(irq_status);
 	}
 
 	GPIO_PortClearInterruptFlags(GPIOB, 0xFFFF);
 }
 
-void PORTD_IRQHandler(void)
+void PORTC_IRQHandler(void)
 {
-	if(gpio_D_callback)
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOC);
+	if(gpio_C_callback)
 	{
-		gpio_D_callback();
+		gpio_C_callback(irq_status);
 	}
 
-	GPIO_PortClearInterruptFlags(GPIOD, 0xFFFF);
+	GPIO_PortClearInterruptFlags(GPIOC, 0xFFFF);
+}
+
+void PORTD_IRQHandler(void)
+{
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOD);
+
+	if(irq_status & (1 << REVERSE)){
+		set_reverse_pressed_flag(TRUE);
+	}
+
+	if(irq_status & 1 << BLINK){
+		set_blink_pressed_flag(TRUE);
+	}
+
+	if(irq_status & 1 << RIGHT){
+		set_right_pressed_flag(TRUE);
+	}
+
+	if(irq_status & 1 << LEFT){
+		set_left_pressed_flag(TRUE);
+	}
+	if(gpio_D_callback)
+	{
+		gpio_D_callback(irq_status);
+	}
+
+	GPIO_PortClearInterruptFlags(GPIOD, irq_status);
 }
 
 void PORTE_IRQHandler(void)
 {
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOE);
 	if(gpio_E_callback)
 	{
-		gpio_E_callback();
+		gpio_E_callback(irq_status);
 	}
 
 	GPIO_PortClearInterruptFlags(GPIOE, 0xFFFF);

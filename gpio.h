@@ -15,7 +15,7 @@
 #include <stdbool.h>
 #include "MK64F12.h"
 
-
+#define REVERSE  4u
 #define RIGHT    0u
 #define LEFT     2u
 #define BLINK   3u
@@ -47,13 +47,23 @@ typedef struct
 } gpio_interrupt_flags_t;
 
 
-void GPIO_callback_init(gpio_name_t gpio, void (*handler)(void));
+void GPIO_callback_init(gpio_name_t gpio, void (*handler)(uint32_t flag));
 
 void GPIO_clear_irq_status(gpio_name_t gpio);
 
 uint8_t GPIO_get_irq_status(gpio_name_t gpio);
 
 void GPIO_init(void);
+
+bool_t get_reverse_pressed_flag(void);
+bool_t get_blink_pressed_flag(void);
+bool_t get_right_pressed_flag(void);
+bool_t get_left_pressed_flag(void);
+
+void set_reverse_pressed_flag(bool_t value);
+void set_blink_pressed_flag(bool_t value);
+void set_right_pressed_flag(bool_t value);
+void set_left_pressed_flag(bool_t value);
 
 void init_RGB();
 
