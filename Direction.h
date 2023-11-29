@@ -10,6 +10,10 @@
 
 #include "adc.h"
 #include "FlexTimer.h"
+#include "fsl_ftm.h"
+
+
+void initServo(void);
 
 void AdcToPwm(uint32_t value);
 

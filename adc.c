@@ -10,7 +10,7 @@
 
 #define ADC_INSTANCE         ADC0
 #define ADC_CHANNEL_GROUP    0U
-#define ADC_USER_CHANNEL     12U //PTB2
+#define ADC_USER_CHANNEL     17U //PTE24
 
 bool_t adc_status_flag = FALSE;
 

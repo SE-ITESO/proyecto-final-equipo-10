@@ -67,8 +67,8 @@
 
 
 void FlexTimer_updateCHValue(sint32 channelValue);
-
+void FlexTimer_updateCH1Value(sint32 channelValue);
 void FlexTimer_Init();
-
+void FlexTimer2_Init();
 
 #endif /* FLEXTIMER_H_ */

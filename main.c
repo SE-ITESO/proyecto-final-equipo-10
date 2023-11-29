@@ -36,17 +36,14 @@ NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ,PRIORITY_2);
 DAC0_init();
 ADC_Init();
 FlexTimer_Init();
+FlexTimer2_Init();
 
 while(1){
 	uint32_t adcValue = ADC_Read();
 
-	//DAC_SetBufferValue(DAC0, 0U, adcValue);
-
-
 //	moveForward(100);
 	AdcToPwm(adcValue);
 
-	FlexTimer_updateCHValue(50u);
 
 }
 

@@ -69,8 +69,13 @@ void GPIO_init(void)
 	CLOCK_EnableClock(kCLOCK_PortD);
 	CLOCK_EnableClock(kCLOCK_PortC);
 
+
 	GPIO_PinInit(GPIOC, 1u, &gpio_output_config);
 	PORT_SetPinMux(PORTC, 1u, kPORT_MuxAlt4);
+
+	//Servomotor
+	GPIO_PinInit(GPIOC, 3u, &gpio_output_config);
+	PORT_SetPinMux(PORTC, 3u, kPORT_MuxAlt4);
 
 	//Botones de Direccionales
 	GPIO_PinInit(GPIOD, RIGHT, &gpio_input_config);
