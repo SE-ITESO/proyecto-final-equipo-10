@@ -16,11 +16,11 @@
 #include "MK64F12.h"
 
 #define REVERSE  4u
-#define RIGHT    0u
-#define LEFT     2u
-#define BLINK   3u
-#define LED_R   17u
-#define LED_L   16u
+#define RIGHT   0u
+#define LEFT    7u
+#define BLINK   5u
+#define LED_R   11u
+#define LED_L   10u
 
 typedef enum
 {

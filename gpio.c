@@ -72,6 +72,7 @@ void GPIO_init(void)
 
 	CLOCK_EnableClock(kCLOCK_PortB);
 	CLOCK_EnableClock(kCLOCK_PortD);
+	CLOCK_EnableClock(kCLOCK_PortE);
 	CLOCK_EnableClock(kCLOCK_PortC);
 
 	//control para Motores
@@ -83,23 +84,23 @@ void GPIO_init(void)
 	PORT_SetPinMux(PORTC, 3u, kPORT_MuxAlt4);
 
 	//Boton para Reversa
-	GPIO_PinInit(GPIOD, REVERSE, &gpio_input_config);
-	PORT_SetPinConfig(PORTD, REVERSE, &button_config);
-	PORT_SetPinInterruptConfig(PORTD, REVERSE, kPORT_InterruptFallingEdge);
+	GPIO_PinInit(GPIOC, REVERSE, &gpio_input_config);
+	PORT_SetPinConfig(PORTC, REVERSE, &button_config);
+	PORT_SetPinInterruptConfig(PORTC, REVERSE, kPORT_InterruptFallingEdge);
 
 	//Botones de Direccionales
-	GPIO_PinInit(GPIOD, RIGHT, &gpio_input_config);
-	PORT_SetPinConfig(PORTD, RIGHT, &button_config);
-	PORT_SetPinInterruptConfig(PORTD, RIGHT, kPORT_InterruptFallingEdge);
+	GPIO_PinInit(GPIOC, RIGHT, &gpio_input_config);
+	PORT_SetPinConfig(PORTC, RIGHT, &button_config);
+	PORT_SetPinInterruptConfig(PORTC, RIGHT, kPORT_InterruptFallingEdge);
 
-	GPIO_PinInit(GPIOD, LEFT, &gpio_input_config);
-	PORT_SetPinConfig(PORTD, LEFT, &button_config);
-	PORT_SetPinInterruptConfig(PORTD, LEFT, kPORT_InterruptFallingEdge);
+	GPIO_PinInit(GPIOC, LEFT, &gpio_input_config);
+	PORT_SetPinConfig(PORTC, LEFT, &button_config);
+	PORT_SetPinInterruptConfig(PORTC, LEFT, kPORT_InterruptFallingEdge);
 
 	//Boton para Intermitentes
-	GPIO_PinInit(GPIOD, BLINK, &gpio_input_config);
-	PORT_SetPinConfig(PORTD, BLINK, &button_config);
-	PORT_SetPinInterruptConfig(PORTD, BLINK, kPORT_InterruptFallingEdge);
+	GPIO_PinInit(GPIOC, BLINK, &gpio_input_config);
+	PORT_SetPinConfig(PORTC, BLINK, &button_config);
+	PORT_SetPinInterruptConfig(PORTC, BLINK, kPORT_InterruptFallingEdge);
 
 	//LED izquirdo
 	PORT_SetPinMux(PORTC, LED_R, kPORT_MuxAsGpio);
@@ -178,19 +179,6 @@ void PORTC_IRQHandler(void)
 {
 	uint32_t irq_status = 0;
 	irq_status = GPIO_PortGetInterruptFlags(GPIOC);
-	if(gpio_C_callback)
-	{
-		gpio_C_callback(irq_status);
-	}
-
-	GPIO_PortClearInterruptFlags(GPIOC, 0xFFFF);
-}
-
-void PORTD_IRQHandler(void)
-{
-	uint32_t irq_status = 0;
-	irq_status = GPIO_PortGetInterruptFlags(GPIOD);
-
 	if(irq_status & (1 << REVERSE)){
 		set_reverse_pressed_flag(TRUE);
 	}
@@ -206,12 +194,25 @@ void PORTD_IRQHandler(void)
 	if(irq_status & 1 << LEFT){
 		set_left_pressed_flag(TRUE);
 	}
+	if(gpio_C_callback)
+	{
+		gpio_C_callback(irq_status);
+	}
+
+	GPIO_PortClearInterruptFlags(GPIOC, irq_status);
+}
+
+void PORTD_IRQHandler(void)
+{
+	uint32_t irq_status = 0;
+	irq_status = GPIO_PortGetInterruptFlags(GPIOD);
+
 	if(gpio_D_callback)
 	{
 		gpio_D_callback(irq_status);
 	}
 
-	GPIO_PortClearInterruptFlags(GPIOD, irq_status);
+	GPIO_PortClearInterruptFlags(GPIOD, 0xFFFF);
 }
 
 void PORTE_IRQHandler(void)

@@ -26,8 +26,21 @@ void AdcToPwmMotorFwd(uint32_t value)
 	    value = ADC_MAX_VALUE;
 	}
     // Realizar la conversión
-    uint32_t calcValue= ((value * 255) / ADC_MAX_VALUE);
+    uint32_t calcValue= (((value-700) * 255) / ADC_MAX_VALUE);
+
     moveForward(calcValue);
+}
+
+void AdcToPwmMotorBwd(uint32_t value)
+{
+	if (value > ADC_MAX_VALUE)
+	{
+	    value = ADC_MAX_VALUE;
+	}
+    // Realizar la conversión
+    uint32_t calcValue= ((value * 255) / ADC_MAX_VALUE);
+
+    moveBackward(calcValue);
 }
 
 

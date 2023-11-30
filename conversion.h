@@ -12,10 +12,12 @@
 #include "FlexTimer.h"
 #include "MotorShield.h"
 
-#define ADC_MAX_VALUE 4096u
+#define ADC_MAX_VALUE 4095u
 
 void AdcToPwmServo(uint32_t value);
 
 void AdcToPwmMotorFwd(uint32_t value);
+
+void AdcToPwmMotorBwd(uint32_t value);
 
 #endif /* CONVERSION_H_ */
