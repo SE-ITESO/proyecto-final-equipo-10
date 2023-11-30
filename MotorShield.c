@@ -70,10 +70,7 @@ void initMotorControlPins(void) {
 }
 
 
-
-
 void moveForward(uint16_t Percent) {
-
 	FlexTimer_updateCHValue(Percent);
 
     // Motor A
@@ -103,11 +100,11 @@ void moveBackward() {
 void stopMotors(void) {
 
     // Motor A
-    GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 0);
-    GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 0);
+    GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 1);
+    GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 1);
 
     // Motor B
-    GPIO_PinWrite(GPIOB, MOTOR_B_IN1_PIN, 0);
-    GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 0);
+    GPIO_PinWrite(GPIOB, MOTOR_B_IN1_PIN, 1);
+    GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 1);
 
 }

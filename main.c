@@ -9,32 +9,40 @@
  * @file    Proyecto_NXP_embebidos.c
  * @brief   Application entry point.
  */
-#include <stdio.h>
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "MK64F12.h"
-#include "fsl_debug_console.h"
+
+#include "gpio.h"
+#include "nvic.h"
+#include "pit.h"
+#include "dac.h"
+#include "adc.h"
 #include "MotorShield.h"
 #include "FlexTimer.h"
-#include "servo.h"
-
-
-
+#include "conversion.h"
+#include "buttonManager.h"
 
 int main(void) {
 
-FlexTimer_Init();
-
-
-//initServo();
+GPIO_init();
 initMotorControlPins();
+ADC_Init();
+init_PIT0();
+FlexTimer_Init();
+FlexTimer2_Init();
 
+NVIC_EnableIRQ(PORTD_IRQn);
+NVIC_EnableIRQ(PORTC_IRQn);
+
+GPIO_callback_init(GPIO_C, choose_button_pressed);
 
 while(1){
-	moveForward(255);
-	//updateServoPosition(200);
+
+//	leds_machine();
+
+	uint32_t adcValueServo = ADC_Read_Servo();
+	uint32_t adcValueMotor = ADC_Read_Motor();
+
+	AdcToPwmServo(adcValueServo);
+	AdcToPwmMotorFwd(adcValueMotor);
 
 
 }

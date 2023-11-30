@@ -14,7 +14,7 @@
 
 #include "MK64F12.h"
 #include "DataTypeDefinitions.h"
-
+#include "fsl_ftm.h"
 
 #define FLEX_TIMER_0_CLOCK_GATING 0x01000000
 
@@ -66,9 +66,9 @@
 
 
 
-void FlexTimer_updateCHValue(sint16 channelValue);
-
+void FlexTimer_updateCHValue(sint32 channelValue);
+void FlexTimer_updateCH1Value(sint32 channelValue);
 void FlexTimer_Init();
-
+void FlexTimer2_Init();
 
 #endif /* FLEXTIMER_H_ */
