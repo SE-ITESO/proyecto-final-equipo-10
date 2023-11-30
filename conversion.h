@@ -13,10 +13,11 @@
 #include "MotorShield.h"
 
 #define ADC_MAX_VALUE 4095u
+#define ADC_MIN_VALUE 2300u
 
 void AdcToPwmServo(uint32_t value);
 
-void AdcToPwmMotorFwd(uint32_t value);
+void AdcToPwmMotor(uint32_t value);
 
 void AdcToPwmMotorBwd(uint32_t value);
 

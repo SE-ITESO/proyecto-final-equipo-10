@@ -82,8 +82,8 @@ void moveForward(uint16_t Percent) {
     GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 0);
 }
 
-void moveBackward() {
-
+void moveBackward(uint16_t Percent) {
+	FlexTimer_updateCHValue(Percent);
 
     // Motor A
     GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 0);

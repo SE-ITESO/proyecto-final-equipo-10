@@ -19,6 +19,7 @@
 #include "FlexTimer.h"
 #include "conversion.h"
 #include "buttonManager.h"
+#include "states_machine.h"
 
 int main(void) {
 
@@ -36,13 +37,12 @@ GPIO_callback_init(GPIO_C, choose_button_pressed);
 
 while(1){
 
+	uint32_t adcValueServo = ADC_Read_Servo();
 //	leds_machine();
 
-	uint32_t adcValueServo = ADC_Read_Servo();
-	uint32_t adcValueMotor = ADC_Read_Motor();
-
 	AdcToPwmServo(adcValueServo);
-	AdcToPwmMotorFwd(adcValueMotor);
+	initial_machine();
+
 
 
 }

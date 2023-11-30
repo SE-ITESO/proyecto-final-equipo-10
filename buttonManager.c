@@ -7,9 +7,11 @@
 
 #include "buttonManager.h"
 
-LED_state_t g_states = both_off_s;
+LED_state_t g_state = both_off_s;
 
 motors_dir_t g_motor = forward_s;
+
+
 //
 //void leds_machine(void)
 //{
@@ -70,13 +72,16 @@ void choose_button_pressed(uint32_t port){
 //	}
 
 	if(get_blink_pressed_flag()){
+
 		LED_Blink_on();
-		set_blink_pressed_flag(FALSE);
+
+		//set_blink_pressed_flag(FALSE);
 	}
+
 
 	if(get_right_pressed_flag()){
 		LED_R_on();
-		set_right_pressed_flag(FALSE);
+		//set_right_pressed_flag(FALSE);
 	}
 
 	if(get_left_pressed_flag()){
@@ -111,7 +116,7 @@ void LED_on(void)
 
 void LED_off(void)
 {
-	LED_off();
+	//LED_off();
 	GPIO_PortSet(GPIOC, 1 << LED_R);
 	GPIO_PortSet(GPIOC, 1 << LED_L);
 }
@@ -120,7 +125,9 @@ void LED_Blink_on(void)
 {
 	GPIO_PortToggle(GPIOC, 1<<LED_L);
 	GPIO_PortToggle(GPIOC, 1<<LED_R);
-	for (volatile int i = 0; i < 1000000; ++i) {}  // Retardo
+	SDK_DelayAtLeastUs(2000000, 21000000);
+	GPIO_PortToggle(GPIOC, 1<<LED_L);
+	GPIO_PortToggle(GPIOC, 1<<LED_R);
 
 }
 
