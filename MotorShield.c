@@ -9,6 +9,7 @@
 #include "fsl_gpio.h"
 #include "fsl_ftm.h"
 #include "fsl_port.h"
+#include "FlexTimer.h"
 
 // Define motor control pins
 #define MOTOR_A_IN1_PIN 2U  // Replace with the actual pin number connected to L298N IN1
@@ -23,10 +24,17 @@
 
 /* Get source clock for FTM driver */
 #define FTM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_BusClk)
+#ifndef FTM_PWM_ON_LEVEL
+#define FTM_PWM_ON_LEVEL kFTM_HighTrue
+#endif
+
+
+/* Get source clock for FTM driver */
+#define FTM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_BusClk)
 
 void initMotorControlPins(void) {
     gpio_pin_config_t motorConfig = {
-        kGPIO_DigitalOutput, 0,
+        kGPIO_DigitalOutput, 1,
     };
 	const port_pin_config_t gpio_config = {
 			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
@@ -42,7 +50,9 @@ void initMotorControlPins(void) {
     CLOCK_EnableClock(kCLOCK_PortC);
 
     // Assign PTC3 to FTM0_CH0
+   PORT_SetPinMux(PORTC, 1U, kPORT_MuxAlt4);
    PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt4);
+
 
 
     // Initialize motor control pins as digital outputs
@@ -57,44 +67,12 @@ void initMotorControlPins(void) {
 
     GPIO_PinInit(GPIOB, MOTOR_B_IN2_PIN, &motorConfig);
     PORT_SetPinConfig(PORTB, MOTOR_B_IN2_PIN, &gpio_config);
-
 }
 
-void initFTM(void) {
-    ftm_config_t ftmInfo;
-    ftm_chnl_pwm_signal_param_t ftmParam;
 
-    // Initialize FTM module
-    FTM_GetDefaultConfig(&ftmInfo);
-    FTM_Init(FTM_MODULE, &ftmInfo);
+void moveForward(uint16_t Percent) {
+	FlexTimer_updateCHValue(Percent);
 
-
-    // Configure FTM channel for PWM
-    ftmParam.chnlNumber = FTM_CHANNEL;
-    ftmParam.level = kFTM_HighTrue;
-    ftmParam.dutyCyclePercent = 0U; // Initial duty cycle (0-100)
-    ftmParam.firstEdgeDelayPercent = 0U;
-
-    FTM_SetupPwm(FTM_MODULE, &ftmParam, 1U, kFTM_EdgeAlignedPwm, 10000U, FTM_SOURCE_CLOCK);
-
-
-
-
-
-	// Start the FTM timer
-	  FTM_StartTimer(FTM_MODULE, kFTM_SystemClock);
-
-}
-
-void setMotorSpeed(uint8_t percent) {
-    // Set the duty cycle to control motor speed
-    FTM_UpdatePwmDutycycle(FTM_MODULE, FTM_CHANNEL, kFTM_EdgeAlignedPwm, percent);
-}
-
-void moveForward(uint8_t percent) {
-
-
-	FTM_UpdatePwmDutycycle(FTM_MODULE, FTM_CHANNEL, kFTM_EdgeAlignedPwm, percent);
     // Motor A
      GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 1);
      GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 0);
@@ -104,13 +82,13 @@ void moveForward(uint8_t percent) {
     GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 0);
 }
 
-void moveBackward(uint8_t percent) {
-
-	FTM_UpdatePwmDutycycle(FTM_MODULE, FTM_CHANNEL, kFTM_EdgeAlignedPwm, percent);
+void moveBackward(uint16_t Percent) {
+	FlexTimer_updateCHValue(Percent);
 
     // Motor A
     GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 0);
     GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 1);
+
 
     // Motor B
     GPIO_PinWrite(GPIOB, MOTOR_B_IN1_PIN, 0);
@@ -122,11 +100,11 @@ void moveBackward(uint8_t percent) {
 void stopMotors(void) {
 
     // Motor A
-    GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 0);
-    GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 0);
+    GPIO_PinWrite(GPIOB, MOTOR_A_IN1_PIN, 1);
+    GPIO_PinWrite(GPIOB, MOTOR_A_IN2_PIN, 1);
 
     // Motor B
-    GPIO_PinWrite(GPIOB, MOTOR_B_IN1_PIN, 0);
-    GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 0);
+    GPIO_PinWrite(GPIOB, MOTOR_B_IN1_PIN, 1);
+    GPIO_PinWrite(GPIOB, MOTOR_B_IN2_PIN, 1);
 
 }

@@ -10,7 +10,7 @@
 
 void initMotorControlPins(void);
 void initFTM(void);
-void moveForward(uint8_t percent);
-void moveBackward(uint8_t percent);
+void moveForward(uint16_t Percent);
+void moveBackward(uint16_t Percent);
 
 #endif /* MOTORSHIELD_H_ */

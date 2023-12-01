@@ -9,26 +9,42 @@
  * @file    Proyecto_NXP_embebidos.c
  * @brief   Application entry point.
  */
-#include <stdio.h>
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "MK64F12.h"
-#include "fsl_debug_console.h"
+
+#include "gpio.h"
+#include "nvic.h"
+#include "pit.h"
+#include "dac.h"
+#include "adc.h"
 #include "MotorShield.h"
-
-
-
+#include "FlexTimer.h"
+#include "conversion.h"
+#include "buttonManager.h"
+#include "states_machine.h"
 
 int main(void) {
 
-initFTM();
+GPIO_init();
 initMotorControlPins();
+ADC_Init();
+init_PIT0();
+init_PIT0();
+FlexTimer_Init();
+FlexTimer2_Init();
+
+NVIC_EnableIRQ(PORTD_IRQn);
+NVIC_EnableIRQ(PORTC_IRQn);
 
 
 while(1){
-	moveForward(100);
+
+	uint32_t adcValueServo = ADC_Read_Servo();
+
+	AdcToPwmServo(adcValueServo);
+	initial_machine();
+	machine_blink();
+
+
+
 }
 
 
